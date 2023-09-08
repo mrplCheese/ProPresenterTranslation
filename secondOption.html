@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <title>Dropdown with JavaScript</title>
+</head>
+
+<body>
+    <label for="myDropdown">Select a presentation</label>
+    <select id="myDropdown" name="arrayIndex">
+        <!-- Options will be added dynamically using JavaScript -->
+    </select>
+    <p id="result"></p>
+    <p id="carried"></p>
+    
+    <button id = "prev">prev<button>
+    <button id = "next">next<button>
+
+
+<script>
+    var data;
+    var urlParams
+    var queryString
+    var dataArray; // This variable will hold the received array
+    var selectedArray
+    var index
+    
+    function setup(){
+                try{
+                    queryString = window.location.search;
+                    urlParams = new URLSearchParams(queryString);
+                    //data = JSON.parse(urlParams.get("data"));
+                    var str = JSON.stringify(queryString)
+                    var new_str = str.slice(7)
+                    var new_str2 = new_str.substring(0,new_str.length-1)
+                    document.getElementById("carried").textContent = "Sending data... This may take a few moments."
+                    sendSelection(new_str2);
+                    
+                    document.getElementById("prev").addEventListener("click", function () {
+                            index = index - 1
+                            if (index < 0){
+                                index = selectedArray.length-1
+                            }
+                            document.getElementById("result").textContent = JSON.stringify(selectedArray[index])
+                        })
+                        
+                    document.getElementById("next").addEventListener("click", function () {
+                            index = index + 1
+                            if (index >= selectedArray.length){
+                                    index = 0
+                                }
+                                
+                            document.getElementById("result").textContent = JSON.stringify(selectedArray[index])
+                        })
+                }
+                catch(error){
+                    document.getElementById("result").textContent = ""
+                    queryString = window.location.search;
+                    urlParams = new URLSearchParams(queryString);
+                    document.getElementById("carried").textContent = JSON.stringify(queryString + "is this working?")
+                }
+    }
+    // Function to populate the dropdown options based on the received array length
+    function populateDropdown() {
+        var dropdown = document.getElementById("myDropdown");
+
+        // Clear existing options
+        dropdown.innerHTML = "";
+
+        // Populate the dropdown with indexes
+        for (var i = 0; i < dataArray.length; i++) {
+            var option = document.createElement("option");
+            option.value = i;
+            option.text = "Index " + i;
+            dropdown.appendChild(option);
+        }
+    }
+
+    function displaySelectedArray() {
+        var dropdown = document.getElementById("myDropdown");
+        var selectedIndex = dropdown.options[dropdown.selectedIndex].value;
+
+        if (selectedIndex >= 0 && selectedIndex < dataArray.length) {
+            // Display the selected array
+            selectedArray = dataArray[selectedIndex];
+            document.getElementById("result").textContent = JSON.stringify(selectedArray[0]);
+        } else {
+            document.getElementById("result").textContent = "Invalid selection.";
+        }
+    }
+
+    // Attach an event listener to the dropdown's onchange event
+    document.getElementById("myDropdown").addEventListener("change", displaySelectedArray);
+
+    // Function to send the selected value to the server using AJAX
+    function sendSelection(selectedValue) {
+        
+        document.getElementById("result").textContent = "";
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/request", true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+        // Define the data to be sent as a JSON object
+        var data2 = {
+            selectedValue: selectedValue
+        };
+
+        // Convert the data to a JSON string
+        var jsonData = JSON.stringify(data2);
+
+        // Set up the callback function to handle the server's response
+        index = 0
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                dataArray = JSON.parse(xhr.responseText);
+                document.getElementById("carried").textContent = ""
+                document.getElementById("result").textContent = JSON.stringify(dataArray[index]);
+                populateDropdown(); // Update the dropdown after receiving data
+            }
+        };
+
+        // Send the JSON data to the server
+        //document.getElementById("result").textContent = jsonData;
+        xhr.send(jsonData);
+    }
+    window.onload = setup
+
+</script>
+
+</body>
+
+</html>
+
+
