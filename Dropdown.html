@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <title>Dropdown with JavaScript</title>
+</head>
+<body>
+    <label for="myDropdown">Select a language:</label>
+    <select id="myDropdown" name="language">
+        <option value="fr">Française</option>
+        <option value="es">Español</option>
+        <option value="rw">Kinyarwanda</option>
+        <option value="eng">English</option>
+    </select>
+    <button onclick="sendSelection()">Submit</button>
+
+    <p id="result"></p>
+
+    <script>
+        function sendSelection() {
+            // Get the selected option element
+            var dropdown = document.getElementById("myDropdown");
+            var selectedOption = dropdown.options[dropdown.selectedIndex];
+
+            // Get the value of the selected option
+            var selectedValue = selectedOption.value;
+            window.location.href = "/secondOption?data=" + encodeURIComponent(selectedValue)
+        }
+    </script>
+    
+    
+</body>
+</html>
