@@ -4,14 +4,25 @@ Created on Mon Aug 28 11:03:59 2023
 
 @author: Bachs
 """
+"""
+TODO: 
+More dynamic dropdown (add a search feature)
+Bibles implementation (several problems with that)
+
+"""
+
 from flask import Flask, request, jsonify, render_template
 import translationApp
 import json
-#import BibleAPIRequest #Eventually
+#import BibleAPIRequest
 
-allText = translationApp.getAllText()#optional param: host
-languages = ['eng']
-playlist_dict = {'eng':allText}
+allText = translationApp.getAllText(host="DESKTOP-NPBA7NC:50001")# For when at Church: host="DESKTOP-NPBA7NC:50001"
+print("all text: ", allText)
+print(type(allText))
+languages = ['en']
+playlist_dict = {'en':allText}
+language_dict = translationApp.language_code_dict
+
 """
 Key-value pairs are like this: 
     'language_key_code'
@@ -22,7 +33,7 @@ def create_app():
     
     @app.route('/', methods = ['GET'])
     def home():
-        return(render_template('Dropdown.html'))
+        return(render_template('Dropdown.html', languages = language_dict))
     
     @app.route('/secondOption', methods = ['GET'])
     def word():
@@ -36,7 +47,7 @@ def create_app():
             print("already in list")
         else:
             languages.append(language)
-            value = translationApp.translate_list_of_list(text = allText, target_language_code = language)
+            value = translationApp.translate_list_of_list3(text = allText, target_language_code = language)
             playlist_dict[language] = value
             print("Translated! Yay.")
     
