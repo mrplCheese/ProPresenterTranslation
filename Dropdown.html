@@ -1,22 +1,117 @@
 <!DOCTYPE html>
 <html>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <head>
-    <title>Dropdown with JavaScript</title>
+    <title>Dropdown with Search</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Chalkduster', cursive;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dropdown-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .dropdown {
+            margin-bottom: 10px;
+        }
+
+        #searchInput {
+            width: 250px;
+            padding: 10px;
+            border: 2px solid #fff;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-family: 'Chalkduster', cursive;
+            font-size: 16px;
+        }
+
+        #myDropdown {
+            width: 250px;
+            padding: 10px;
+            border: 2px solid #fff;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-family: 'Chalkduster', cursive;
+            font-size: 16px;
+        }
+
+        #myDropdown option {
+            background-color: #000;
+            color: #fff;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #fff;
+            color: #000;
+            border: none;
+            font-family: 'Chalkduster', cursive;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ccc;
+        }
+    </style>
 </head>
 <body>
-    <label for="myDropdown">Select a language:</label>
-    <select id="myDropdown" name="language">
-        <option value="fr">Française</option>
-        <option value="es">Español</option>
-        <option value="rw">Kinyarwanda</option>
-        <option value="eng">English</option>
-    </select>
-    <button onclick="sendSelection()">Submit</button>
-
-    <p id="result"></p>
-
+    <div class="dropdown-container">
+        <div class="dropdown">
+            <input id="searchInput" type="text" onkeyup="filterDropdown()" placeholder="Type for quick search">
+        </div>
+        <div class="dropdown">
+            <select id="myDropdown" name="language">
+                <option value="" disabled selected>Select a language</option>
+                {% for text, value in languages.items() %}
+                    <option value="{{ value }}">{{ text }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button onclick="sendSelection()">Submit</button>
+    </div>
+    
     <script>
+        function filterDropdown() {
+            // Declare variables
+            var input, filter, select, options, option, i;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            select = document.getElementById("myDropdown");
+            options = select.getElementsByTagName("option");
+
+            // Check if any option matches the search input
+            var found = false;
+            for (i = 0; i < options.length; i++) {
+                option = options[i];
+                if (option.innerText.toUpperCase().indexOf(filter) > -1) {
+                    option.style.display = "";
+                    found = true;
+                } else {
+                    option.style.display = "none";
+                }
+            }
+
+            // If no matching option is found, set the search input as the text of the first option
+            if (!found) {
+                var searchOption = document.getElementById("searchOption");
+                searchOption.text = filter;
+                searchOption.value = filter;
+            } else {
+                // Clear the search input as text if a match is found
+                var searchOption = document.getElementById("searchOption");
+                searchOption.text = "";
+                searchOption.value = "";
+            }
+        }
+
         function sendSelection() {
             // Get the selected option element
             var dropdown = document.getElementById("myDropdown");
@@ -24,10 +119,8 @@
 
             // Get the value of the selected option
             var selectedValue = selectedOption.value;
-            window.location.href = "/secondOption?data=" + encodeURIComponent(selectedValue)
+            window.location.href = "/secondOption?data=" + encodeURIComponent(selectedValue);
         }
     </script>
-    
-    
 </body>
 </html>
