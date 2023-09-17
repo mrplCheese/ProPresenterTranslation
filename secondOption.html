@@ -13,8 +13,8 @@
     <p id="result"></p>
     <p id="carried"></p>
     
-    <button id = "prev">prev<button>
-    <button id = "next">next<button>
+    <button id = "prev">prev</button>
+    <button id = "next">next</button>
 
 
 <script>
@@ -23,35 +23,38 @@
     var queryString
     var dataArray; // This variable will hold the received array
     var selectedArray
-    var index
+    var index = 0
+    var dropdown = document.getElementById("myDropdown");
+    var selectedIndex = 0
+    
+      
+    document.getElementById("prev").addEventListener("click", function () {
+            index = index - 1
+            if (index < 0){
+                index = selectedArray.length-1
+            }
+            document.getElementById("result").textContent = JSON.stringify(selectedArray[index])
+        })
+                        
+    document.getElementById("next").addEventListener("click", function () {
+            index = index + 1
+            if (index >= selectedArray.length){
+                    index = 0
+                }
+                                
+            document.getElementById("result").textContent = JSON.stringify(selectedArray[index])
+        })
     
     function setup(){
                 try{
                     queryString = window.location.search;
                     urlParams = new URLSearchParams(queryString);
                     //data = JSON.parse(urlParams.get("data"));
-                    var str = JSON.stringify(queryString)
-                    var new_str = str.slice(7)
-                    var new_str2 = new_str.substring(0,new_str.length-1)
+                    var str = JSON.stringify(queryString);
+                    var new_str = str.slice(7);
+                    var new_str2 = new_str.substring(0,new_str.length-1);
                     document.getElementById("carried").textContent = "Sending data... This may take a few moments."
                     sendSelection(new_str2);
-                    
-                    document.getElementById("prev").addEventListener("click", function () {
-                            index = index - 1
-                            if (index < 0){
-                                index = selectedArray.length-1
-                            }
-                            document.getElementById("result").textContent = JSON.stringify(selectedArray[index])
-                        })
-                        
-                    document.getElementById("next").addEventListener("click", function () {
-                            index = index + 1
-                            if (index >= selectedArray.length){
-                                    index = 0
-                                }
-                                
-                            document.getElementById("result").textContent = JSON.stringify(selectedArray[index])
-                        })
                 }
                 catch(error){
                     document.getElementById("result").textContent = ""
@@ -74,11 +77,17 @@
             option.text = "Index " + i;
             dropdown.appendChild(option);
         }
+
+    // Automatically select the first item in the dropdown
+    if (dropdown.options.length > 0) {
+        dropdown.selectedIndex = 0;
+        displaySelectedArray();
     }
+}
 
     function displaySelectedArray() {
-        var dropdown = document.getElementById("myDropdown");
-        var selectedIndex = dropdown.options[dropdown.selectedIndex].value;
+        dropdown = document.getElementById("myDropdown");
+        selectedIndex = dropdown.options[dropdown.selectedIndex].value;
 
         if (selectedIndex >= 0 && selectedIndex < dataArray.length) {
             // Display the selected array
@@ -114,7 +123,7 @@
             if (xhr.readyState === 4 && xhr.status === 200) {
                 dataArray = JSON.parse(xhr.responseText);
                 document.getElementById("carried").textContent = ""
-                document.getElementById("result").textContent = JSON.stringify(dataArray[index]);
+                document.getElementById("result").textContent = JSON.stringify(dataArray[0][0]);
                 populateDropdown(); // Update the dropdown after receiving data
             }
         };
@@ -130,5 +139,3 @@
 </body>
 
 </html>
-
-
