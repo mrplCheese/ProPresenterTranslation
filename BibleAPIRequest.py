@@ -40,7 +40,7 @@ def extract_text(data):
 
     return text_list
 
-url = form_passage_request_url("a8a97eebae3c98e4-01", "ROM.1.1-ROM.1.31")
+url = form_passage_request_url("65eec8e0b60e656b-01", "2Ki.1.1-2Ki.1.3") #Always the first three non-space characters. 
 print("url: " + url)
 #url = "https://api.scripture.api.bible/v1/bibles/a8a97eebae3c98e4-01/passages/ROM.1.1-ROM.1.31"
 #
